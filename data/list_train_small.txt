@@ -1,0 +1,1 @@
+../Datasets/CUFS/CUHK/sketches/00.png||../Datasets/CUFS/CUHK/photos/00.png||../Datasets/CUFS/CUHK/mat2/00.mat||114514

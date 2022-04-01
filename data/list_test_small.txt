@@ -1,0 +1,3 @@
+../Datasets/CUFS/AR/sketches/1.jpg||../Datasets/CUFS/AR/photos/1.jpg||../Datasets/CUFS/AR/mat2/1.mat||27
+../Datasets/CUFS/CUHK/sketches/00.png||../Datasets/CUFS/CUHK/photos/00.png||../Datasets/CUFS/CUHK/mat2/00.mat||297
+../Datasets/CUFS/XM2VTS/sketches/10.jpg||../Datasets/CUFS/XM2VTS/photos/10.jpg||../Datasets/CUFS/XM2VTS/mat2/10.mat||574
