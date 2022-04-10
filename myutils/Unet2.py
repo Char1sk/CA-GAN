@@ -163,7 +163,8 @@ class MyUnetGenerator(nn.Module):
 		x = self.relu16(x)
 		x = self.conv16(x)
 		x = self.tanh16(x)
-
+        
+		x = x * 255
 
 		return x
 

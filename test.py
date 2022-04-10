@@ -22,6 +22,8 @@ if __name__ == '__main__':
     
     netE.load_state_dict(torch.load('../Models/sketch2photo/netE1_epoch_700.weight'))
     netG.load_state_dict(torch.load('../Models/sketch2photo/netG1_epoch_700.weight'))
+    # netE.load_state_dict(torch.load('../Models/sketch2photo/netE_epoch_250.weight'))
+    # netG.load_state_dict(torch.load('../Models/sketch2photo/netG_epoch_250.weight'))
 
     netE.cuda()
     netG.cuda()

@@ -20,7 +20,8 @@ def init():
     parser.add_argument('--cuda', action='store_true', default=True, help='use cuda?')
     parser.add_argument('--no_lsgan', action='store_true',
                         help='do *not* use least square GAN, if false, use vanilla GAN')
-    parser.add_argument('--lambda1', type=float, default=10.0, help='weight for cycle loss (A -> B -> A)')
+    # parser.add_argument('--lambda1', type=float, default=10.0, help='weight for cycle loss (A -> B -> A)')
+    parser.add_argument('--lambda1', type=float, default=0.01, help='weight for cycle loss (A -> B -> A)')
     parser.add_argument('--lambda_g', type=float, default=5, help='qing')
     parser.add_argument('--beta1', type=float, default=0.5, help='momentum term of adam')
     parser.add_argument('--n_epoch', type=int, default=700, help='training epoch')

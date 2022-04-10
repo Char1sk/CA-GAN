@@ -26,6 +26,8 @@ from myutils.Unet2 import *
 import net
 import torchvision.utils as vutils
 
+import utils.fid_score
+
 opt = option.init()
 
 torch.cuda.is_available()
@@ -61,7 +63,7 @@ def train(print_every=10):
     netG.apply(weights_init)
     netD.apply(weights_init)
     netE.apply(weights_init)
-
+    
     criterionGAN = GANLoss(use_lsgan=not opt.no_lsgan)
     criterionL1 = torch.nn.L1Loss()
 
@@ -76,6 +78,7 @@ def train(print_every=10):
 
     f = open('./Checkpoint/loss.txt', 'w')
     strat_time = time.time()
+    G_epoch_loss = 0.0
     for epoch in range(1, opt.n_epoch + 1):
         fstr = f'Epoch: {epoch:>3d}'
         print(fstr)
@@ -83,7 +86,9 @@ def train(print_every=10):
         
         D_running_loss = 0.0
         G_running_loss = 0.0
+        G1_running_loss = 0.0
         G2_running_loss = 0.0
+        G3_running_loss = 0.0
 
         for (i, batch) in enumerate(training_data_loader, 1):
             # print(f'    Batch: {i:>5d}')
@@ -125,15 +130,16 @@ def train(print_every=10):
             b, c, w, h = fake_s.shape
             yh = fake_s.expand(b, 3, w, h)
             ys = real_s.expand(b, 3, w, h)
-            _mean = Variable(torch.Tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1).expand_as(yh)).cuda()
-            _var = Variable(torch.Tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1).expand_as(yh)).cuda()
-            yh = yh / 2 + 0.5
-            ys = ys / 2 + 0.5
-            yh = (yh - _mean) / _var
-            ys = (ys - _mean) / _var
+            # _mean = Variable(torch.Tensor([0.485, 0.456, 0.406]).view(1, 3, 1, 1).expand_as(yh)).cuda()
+            # _var = Variable(torch.Tensor([0.229, 0.224, 0.225]).view(1, 3, 1, 1).expand_as(yh)).cuda()
+            # yh = yh / 2 + 0.5
+            # ys = ys / 2 + 0.5
+            # yh = (yh - _mean) / _var
+            # ys = (ys - _mean) / _var
             loss_recog = perceptual_loss(yh, ys)
+            loss_recog *= opt.styleParam
             # Loss total
-            loss_G = loss_G_GAN + loss_G_L1 + opt.styleParam * loss_recog
+            loss_G = loss_G_GAN + loss_G_L1 + loss_recog
             # step
             loss_G.backward()
             optimizer_G.step()
@@ -143,24 +149,44 @@ def train(print_every=10):
 
             D_running_loss += loss_D.item()
             G_running_loss += loss_G.item()
-            G2_running_loss += loss_G.item()
+            G1_running_loss += loss_G_GAN.item()
+            G2_running_loss += loss_G_L1.item()
+            G3_running_loss += loss_recog.item()
+            G_epoch_loss += loss_G.item()
             # print every 10 batch
             if i % print_every == 0:
                 end_time = time.time()
                 time_delta = usedtime(strat_time, end_time)
-                fstr = (f'[{time_delta}] Batch: {i+1:>3d}; D loss: {D_running_loss/print_every:>7.5f};' +
-                                                        f' G loss: {G_running_loss/print_every:>10.5f};')
+                fstr = (f'[{time_delta}] Batch: {i+1:>3d}; D loss: {D_running_loss/print_every:>7.5f};'  +
+                                                        f' G loss: {G_running_loss/print_every:>7.5f};' +
+                                                        f' G1 loss: {G1_running_loss/print_every:>7.5f};' +
+                                                        f' G2 loss: {G2_running_loss/print_every:>7.5f};' +
+                                                        f' G3 loss: {G3_running_loss/print_every:>7.5f};')
                 print(fstr)
                 f.write(fstr+'\n')
                 
                 D_running_loss = 0.0
                 G_running_loss = 0.0
+                G1_running_loss = 0.0
                 G2_running_loss = 0.0
+                G3_running_loss = 0.0
+
+        fstr = (f'Epoch: {epoch:>3d}; Total loss: {G_epoch_loss/len(training_data_loader):>7.5f};')
+        print(fstr)
+        f.write(fstr+'\n')
         f.flush()
         
-        if epoch >= 500 and epoch % 50 == 0:
+        G_epoch_loss = 0.0
+        # if epoch >= 500 and epoch % 50 == 0:
+        if epoch % 50 == 0:
             test(epoch, netG, netE, testing_data_loader, opt)
             checkpoint(epoch, netD, netG, netE)
+            fid = utils.fid_score.get_fid([f'./Output/{epoch}',
+                ['../Datasets/CUFS/AR/photos', '../Datasets/CUFS/CUHK/photos', '../Datasets/CUFS/XM2VTS/photos']])
+            fstr = (f'Epoch: {epoch:>3d}; FID: {fid:>9.5f};')
+            print(fstr)
+            f.write(fstr+'\n')
+            f.flush()
     f.close()
 
 
@@ -179,7 +205,8 @@ def test(epoch, netG, netE, test_data, opt):
         fake_s1 = netG.forward(real_p[:, 0:1, :, :], parsing_feature)
         output_name_A = '{:s}/{:s}{:s}'.format(
             save_dir_A, str(i + 1), '.jpg')
-        vutils.save_image(fake_s1[:, :, 3:253, 28:228], output_name_A, normalize=True, scale_each=True)
+        temp = fake_s1[:, :, 3:253, 28:228].detach()
+        vutils.save_image(temp, output_name_A, normalize=True, scale_each=True)
 
     print(str(epoch) + " saved")
 
