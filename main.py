@@ -180,13 +180,14 @@ def train(print_every=10):
         # if epoch >= 500 and epoch % 50 == 0:
         if epoch % 50 == 0:
             test(epoch, netG, netE, testing_data_loader, opt)
-            checkpoint(epoch, netD, netG, netE)
             fid = utils.fid_score.get_fid([f'./Output/{epoch}',
                 ['../Datasets/CUFS/AR/photos', '../Datasets/CUFS/CUHK/photos', '../Datasets/CUFS/XM2VTS/photos']])
             fstr = (f'Epoch: {epoch:>3d}; FID: {fid:>9.5f};')
             print(fstr)
             f.write(fstr+'\n')
             f.flush()
+        if epoch >= 600 and epoch % 50 == 0:
+            checkpoint(epoch, netD, netG, netE)
     f.close()
 
 
