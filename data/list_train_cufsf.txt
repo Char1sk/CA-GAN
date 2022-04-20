@@ -192,7 +192,6 @@
 ../Datasets/CUFSF-CAGAN/sketches/00697.jpg||../Datasets/CUFSF-CAGAN/photos/00697.jpg||../Datasets/CUFSF-CAGAN/mat2/00697.mat||1730
 ../Datasets/CUFSF-CAGAN/sketches/00382.jpg||../Datasets/CUFSF-CAGAN/photos/00382.jpg||../Datasets/CUFSF-CAGAN/mat2/00382.mat||952
 ../Datasets/CUFSF-CAGAN/sketches/01130.jpg||../Datasets/CUFSF-CAGAN/photos/01130.jpg||../Datasets/CUFSF-CAGAN/mat2/01130.mat||1205
-../Datasets/CUFSF-CAGAN/sketches/01209.jpg||../Datasets/CUFSF-CAGAN/photos/01209.jpg||../Datasets/CUFSF-CAGAN/mat2/01209.mat||742
 ../Datasets/CUFSF-CAGAN/sketches/00032.jpg||../Datasets/CUFSF-CAGAN/photos/00032.jpg||../Datasets/CUFSF-CAGAN/mat2/00032.mat||1615
 ../Datasets/CUFSF-CAGAN/sketches/00595.jpg||../Datasets/CUFSF-CAGAN/photos/00595.jpg||../Datasets/CUFSF-CAGAN/mat2/00595.mat||1132
 ../Datasets/CUFSF-CAGAN/sketches/00086.jpg||../Datasets/CUFSF-CAGAN/photos/00086.jpg||../Datasets/CUFSF-CAGAN/mat2/00086.mat||1021

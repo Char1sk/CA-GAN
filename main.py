@@ -35,6 +35,7 @@ os.environ["CUDA_VISIBLE_DEVICES"] = opt.myGpu
 
 
 def train(print_every=10):
+    torch.autograd.set_detect_anomaly(True)##########
     checkpaths(opt)
 
     train_set = DatasetFromFolder(opt, True)
@@ -47,7 +48,8 @@ def train(print_every=10):
     # D is Discriminator: Bx12x256x256 -> Bx1x131x131
     netD = NLayerDiscriminator(opt.input_nc, opt.ndf, n_layers=1, norm_layer=norm_layer, use_sigmoid=False, gpu_ids=opt.gpu_ids)
     # G is actually Face Encoder and Decoder: Bx1x256x256 -> Bx3x256x256
-    netG = MyUnetGenerator(opt.input_nc, opt.output_nc, 8, opt.ngf, norm_layer=norm_layer, use_dropout=False, gpu_ids=opt.gpu_ids)
+    # netG = MyUnetGenerator(opt.input_nc, opt.output_nc, 8, opt.ngf, norm_layer=norm_layer, use_dropout=False, gpu_ids=opt.gpu_ids)
+    netG = MyCaUnetGenerator(opt.input_nc, opt.output_nc, 8, opt.ngf, norm_layer=norm_layer, use_dropout=False, gpu_ids=opt.gpu_ids)
     # E is actually Composition Encoder: Bx8x256x256 -> [t1 ... t8]
     netE = MyEncoder(opt.input_nc, opt.output_nc, 8, opt.ngf, norm_layer=norm_layer, use_dropout=False, gpu_ids=opt.gpu_ids)
 
